@@ -9,7 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - uses: olafurpg/setup-scala@v2
-      - uses: actions/setup-node@v1
       - uses: olafurpg/setup-gpg@v2
       - name: Publish
         run: |
