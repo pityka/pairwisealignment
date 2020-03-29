@@ -66,6 +66,7 @@ lazy val commonSettings = Seq(
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
   .settings(
+    name := "pairwisealignment",
     libraryDependencies ++= Seq(
       "org.scalameta" %% "munit" % "0.7.1" % Test
     ),
