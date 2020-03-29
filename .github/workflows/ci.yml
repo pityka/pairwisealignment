@@ -1,0 +1,21 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - uses: olafurpg/setup-scala@v2
+    - uses: actions/setup-node@v1
+    - name: Compile
+      run: sbt clean coverage test coverageAggregate
+    - name: Codecov
+      uses: codecov/codecov-action@v1.0.2
+      if: github.actor == 'pityka'
+      with:
+        token: ${{secrets.CODECOV_TOKEN}}
+
