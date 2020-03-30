@@ -43,7 +43,7 @@ private[pairwisealignment] case class MutableMatrix(
   }
 
 }
-object MutableMatrix {
+private[pairwisealignment] object MutableMatrix {
   def apply(r: Int, c: Int): MutableMatrix =
     MutableMatrix(r, c, Array.fill(r * c)(0))
 
@@ -51,7 +51,7 @@ object MutableMatrix {
 
 object OverlapPairwiseAlignment {
 
-  def overlapAlignmentBacktrack(
+  private def overlapAlignmentBacktrack(
       v: String,
       w: String,
       scores: Map[(Char, Char), Int],
@@ -86,7 +86,7 @@ object OverlapPairwiseAlignment {
     (b, s(n, m), mi - 1, mj - 1)
   }
 
-  def overlapAlignmentEmit(
+  private def overlapAlignmentEmit(
       v: String,
       w: String,
       backtrack: MutableMatrix,
@@ -131,7 +131,7 @@ object OverlapPairwiseAlignment {
 
 object FittingPairwiseAlignment {
 
-  def fittingAffineAlignmentBacktrack(
+  private def fittingAffineAlignmentBacktrack(
       v: String,
       w: String,
       scores: Map[(Char, Char), Int],
@@ -220,7 +220,7 @@ object FittingPairwiseAlignment {
     (blower, bmiddle, bupper, middle(n, m), mi - 1, mj - 1)
   }
 
-  def fittingAffineAlignmentEmit(
+  private def fittingAffineAlignmentEmit(
       v: String,
       w: String,
       backtracklower: MutableMatrix,
@@ -271,7 +271,7 @@ object FittingPairwiseAlignment {
     a.reverse.toString -> b.reverse.toString
   }
 
-  def fittingAlignmentBacktrack(
+  private def fittingAlignmentBacktrack(
       v: String,
       w: String,
       scores: Map[(Char, Char), Int],
@@ -309,7 +309,7 @@ object FittingPairwiseAlignment {
     (b, s(n, m), mi - 1, mj - 1)
   }
 
-  def fittingAlignmentEmit(
+  private def fittingAlignmentEmit(
       v: String,
       w: String,
       backtrack: MutableMatrix,
@@ -381,7 +381,7 @@ object FittingPairwiseAlignment {
 
 object LocalPairwiseAlignment {
 
-  def localAlignmentBacktrack(
+  private def localAlignmentBacktrack(
       v: String,
       w: String,
       scores: Map[(Char, Char), Int],
@@ -417,7 +417,7 @@ object LocalPairwiseAlignment {
     (b, max, mi - 1, mj - 1, s)
   }
 
-  def localAlignmentEmit(
+  private def localAlignmentEmit(
       v: String,
       w: String,
       backtrack: MutableMatrix,
@@ -459,7 +459,7 @@ object LocalPairwiseAlignment {
 
 }
 
-object PenaltyHelper {
+private[pairwisealignment] object PenaltyHelper {
   def apply(
       s1: String,
       s2: String,
@@ -481,7 +481,7 @@ object PenaltyHelper {
 
 object GlobalPairwiseAlignment {
 
-  def globalAlignmentBacktrack(
+  private def globalAlignmentBacktrack(
       v: String,
       w: String,
       scores: Map[(Char, Char), Int],
@@ -529,7 +529,7 @@ object GlobalPairwiseAlignment {
     b -> s(n, m)
   }
 
-  def globalAffineAlignmentBacktrack(
+  private def globalAffineAlignmentBacktrack(
       v: String,
       w: String,
       scores: Map[(Char, Char), Int],
@@ -612,7 +612,7 @@ object GlobalPairwiseAlignment {
     (blower, bmiddle, bupper) -> middle(n, m)
   }
 
-  def globalAffineAlignmentEmit(
+  private def globalAffineAlignmentEmit(
       v: String,
       w: String,
       backtracklower: MutableMatrix,
@@ -660,7 +660,7 @@ object GlobalPairwiseAlignment {
     (a.reverse.toString, b.reverse.toString)
   }
 
-  def globalAlignmentEmit(
+  private def globalAlignmentEmit(
       v: String,
       w: String,
       backtrack: MutableMatrix
@@ -736,7 +736,7 @@ object GlobalPairwiseAlignment {
 
 object LongestCommonSubstring {
 
-  def longestCommonSubstringBacktrack(
+  private def longestCommonSubstringBacktrack(
       v: String,
       w: String
   ): MutableMatrix = {
@@ -766,7 +766,7 @@ object LongestCommonSubstring {
     b
   }
 
-  def longestCommonSubstringEmit(
+  private def longestCommonSubstringEmit(
       v: String,
       w: String,
       backtrack: MutableMatrix
