@@ -67,6 +67,14 @@ class PairwiseAlignmentSpec extends FunSuite {
       LongestCommonSubstring.longestCommonSubstring("AACCTTGG", "ACACTGTGA"),
       "AACTTG"
     )
+    assertEquals(
+      LongestCommonSubstring.longestCommonSubstring("AACCTTGG", "BBBBB"),
+      ""
+    )
+    assertEquals(
+      LongestCommonSubstring.longestCommonSubstring("AACCTTGG", "BBBBBAA"),
+      "AA"
+    )
   }
 
   test("global affine alignment") {
@@ -292,6 +300,14 @@ class PairwiseAlignmentSpec extends FunSuite {
       (0, "ATTA----", "ATTAGGGG")
     )
     assertEquals(
+      FittingPairwiseAlignment.fittingAlignment("GGGGATTA", "ATTA", score, 1),
+      (4, "ATTA", "ATTA")
+    )
+    assertEquals(
+      FittingPairwiseAlignment.fittingAlignment("ATTAGGGG", "ATTA", score, 1),
+      (4, "ATTA", "ATTA")
+    )
+    assertEquals(
       FittingPairwiseAlignment
         .fittingAlignment("AATGCAACGT", "TGCACGTGG", score, 2),
       (1, "TGCAACGT--", "TGCA-CGTGG")
@@ -350,6 +366,16 @@ class PairwiseAlignmentSpec extends FunSuite {
     )
     assertEquals(
       FittingPairwiseAlignment
+        .fittingAffineAlignment("GGGGATTA", "ATTA", score, 1, 1),
+      (4, "ATTA", "ATTA")
+    )
+    assertEquals(
+      FittingPairwiseAlignment
+        .fittingAffineAlignment("ATTAGGGG", "ATTA", score, 1, 1),
+      (4, "ATTA", "ATTA")
+    )
+    assertEquals(
+      FittingPairwiseAlignment
         .fittingAffineAlignment("AATGCAACGT", "TGCACGTGG", score, 2, 1),
       (2, "TGCAACGT--", "TGC-ACGTGG")
     )
@@ -357,6 +383,11 @@ class PairwiseAlignmentSpec extends FunSuite {
       FittingPairwiseAlignment
         .fittingAffineAlignment("AATGCAACGT", "TGCAACGTTGG", score, 2, 1),
       (4, "TGCAACGT---", "TGCAACGTTGG")
+    )
+    assertEquals(
+      FittingPairwiseAlignment
+        .fittingAffineAlignment("TGCAACGTTGG", "AATGCAACGT", score, 2, 1),
+      (5, "--TGCAACGT", "AATGCAACGT")
     )
     assertEquals(
       FittingPairwiseAlignment

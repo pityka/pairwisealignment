@@ -1,5 +1,5 @@
 lazy val commonSettings = Seq(
-  scalaVersion := "2.12.11",
+  scalaVersion := "2.12.12",
   parallelExecution in Test := false,
   scalacOptions ++= Seq(
     "-opt:l:method",
@@ -72,5 +72,3 @@ lazy val root = (project in file("."))
     ),
     testFrameworks += new TestFramework("munit.Framework")
   )
-
-parallelExecution in ThisBuild := false

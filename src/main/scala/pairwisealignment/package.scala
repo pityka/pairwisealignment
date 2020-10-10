@@ -42,6 +42,54 @@ private[pairwisealignment] case class MutableMatrix(
     MutableMatrix(rows, cols, d2)
   }
 
+  def maxLoc = {
+    var i = 0
+    val n = data.size
+    var maxi = 0
+    var max = Int.MinValue
+    while (i < n) {
+      val c = data(i)
+      if (c > max) {
+        max = c
+        maxi = i
+      }
+      i += 1
+    }
+    val r = maxi / cols
+    val c = maxi % cols
+    (r, c, max)
+  }
+  def maxInRow(row: Int) = {
+    var i = row * cols
+    val n = i + cols
+    var maxi = 0
+    var max = Int.MinValue
+    while (i < n) {
+      val c = data(i)
+      if (c > max) {
+        max = c
+        maxi = i
+      }
+      i += 1
+    }
+    (maxi % cols, max)
+  }
+  def maxInCol(col: Int) = {
+    var i = 0
+    val n = rows
+    var maxi = 0
+    var max = Int.MinValue
+    while (i < n) {
+      val c = data(i * cols + col)
+      if (c > max) {
+        max = c
+        maxi = i
+      }
+      i += 1
+    }
+    (maxi, max)
+  }
+
 }
 private[pairwisealignment] object MutableMatrix {
   def apply(r: Int, c: Int): MutableMatrix =
@@ -77,13 +125,9 @@ object OverlapPairwiseAlignment {
       s(i, j) = move._2
 
     }
-    s(n, m) = (0 to m map (i => s(n, i)) max)
-    val (mi, mj) = ((0 until s.rows).iterator
-      .flatMap { i => (0 until s.cols).iterator.map { j => (i, j) } })
-      .find(x => s(x._1, x._2) == s(n, m) && x._1 == n)
-      .get
+    val (maxCol, max) = s.maxInRow(n)
 
-    (b, s(n, m), mi - 1, mj - 1)
+    (b, max, n - 1, maxCol - 1)
   }
 
   private def overlapAlignmentEmit(
@@ -211,13 +255,9 @@ object FittingPairwiseAlignment {
       i += 1
     }
 
-    middle(n, m) = (0 to n map (i => middle(i, m)) max)
-    val (mi, mj) = ((0 until middle.rows).iterator
-      .flatMap { i => (0 until middle.cols).iterator.map { j => (i, j) } })
-      .find(x => middle(x._1, x._2) == middle(n, m) && x._2 == m)
-      .get
+    val (maxLoc, max) = middle.maxInCol(m)
 
-    (blower, bmiddle, bupper, middle(n, m), mi - 1, mj - 1)
+    (blower, bmiddle, bupper, max, maxLoc - 1, m - 1)
   }
 
   private def fittingAffineAlignmentEmit(
@@ -339,30 +379,37 @@ object FittingPairwiseAlignment {
   }
 
   def fittingAffineAlignment(
-      v: String,
-      w: String,
+      ref: String,
+      query: String,
       scores: Map[(Char, Char), Int],
       indelpenalty: Int,
       gapextension: Int
   ): (Int, String, String) = {
 
     val (blower, bmiddle, bupper, maxScore, mi, mj) =
-      fittingAffineAlignmentBacktrack(v, w, scores, indelpenalty, gapextension)
+      fittingAffineAlignmentBacktrack(
+        ref,
+        query,
+        scores,
+        indelpenalty,
+        gapextension
+      )
     val (s1, s2) =
-      fittingAffineAlignmentEmit(v, w, blower, bmiddle, bupper, mi, mj)
+      fittingAffineAlignmentEmit(ref, query, blower, bmiddle, bupper, mi, mj)
     (maxScore, s1, s2)
   }
 
   def fittingAlignment(
-      v: String,
-      w: String,
+      ref: String,
+      query: String,
       scores: Map[(Char, Char), Int],
       indelpenalty: Int
   ): (Int, String, String) = {
 
     val (backtrack, maxScore, mi, mj) =
-      fittingAlignmentBacktrack(v, w, scores, indelpenalty)
-    val (s1, s2) = fittingAlignmentEmit(v, w, backtrack, mi, mj)
+      fittingAlignmentBacktrack(ref, query, scores, indelpenalty)
+
+    val (s1, s2) = fittingAlignmentEmit(ref, query, backtrack, mi, mj)
     (maxScore, s1, s2)
   }
 
@@ -397,23 +444,47 @@ object LocalPairwiseAlignment {
     for (j <- 0 to m) {
       s(0, j) = 0
     }
-    for (i <- 1 to n; j <- 1 to m) {
-      val move = List(
-        0 -> math.max(0, (s(i - 1, j) - indelpenalty)),
-        1 -> math.max(0, (s(i, j - 1) - indelpenalty)),
-        2 -> (s(i - 1, j - 1) + math
-          .max(0, scores((v.charAt(i - 1), w.charAt(j - 1))))),
-        3 -> s(i - 1, j - 1)
-      ).maxBy(_._2)
-      b(i - 1, j - 1) = move._1
-      s(i, j) = move._2
+    val ar = Array.ofDim[Int](4)
+    var i = 1
+    while (i <= n) {
+      var j = 1
+      while (j <= m) {
 
+        val move = {
+          val cost0 = math.max(0, (s(i - 1, j) - indelpenalty))
+          val cost1 = math.max(0, (s(i, j - 1) - indelpenalty))
+          val cost2 = (s(i - 1, j - 1) + math
+            .max(0, scores((v.charAt(i - 1), w.charAt(j - 1)))))
+          val cost3 = s(i - 1, j - 1)
+          ar(0) = cost0
+          ar(1) = cost1
+          ar(2) = cost2
+          ar(3) = cost3
+
+          var k = 0
+          var maxi = 0
+          var max = Int.MinValue
+          while (k < 4) {
+            val c = ar(k)
+            if (c > max) {
+              maxi = k
+              max = c
+            }
+            k += 1
+          }
+
+          (maxi, max)
+        }
+        b(i - 1, j - 1) = move._1
+        s(i, j) = move._2
+
+        j += 1
+      }
+      i += 1
     }
-    val max = s.data.max
-    val (mi, mj) = ((0 until s.rows).iterator
-      .flatMap { i => (0 until s.cols).iterator.map { j => (i, j) } })
-      .find(x => s(x._1, x._2) == max)
-      .get
+
+    val (mi, mj, max) = s.maxLoc
+
     (b, max, mi - 1, mj - 1, s)
   }
 
