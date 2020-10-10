@@ -115,16 +115,47 @@ object OverlapPairwiseAlignment {
     for (j <- 0 to m) {
       s(0, j) = -1 * j * indelpenalty
     }
-    for (i <- 1 to n; j <- 1 to m) {
-      val move = List(
-        0 -> (s(i - 1, j) - indelpenalty),
-        1 -> (s(i, j - 1) - indelpenalty),
-        2 -> (s(i - 1, j - 1) + scores((v.charAt(i - 1), w.charAt(j - 1))))
-      ).maxBy(_._2)
-      b(i - 1, j - 1) = move._1
-      s(i, j) = move._2
 
+    val ar = Array.ofDim[Int](3)
+    var i = 1
+    while (i <= n) {
+      var j = 1
+      while (j <= m) {
+
+        val move = {
+          val cost0 = (s(i - 1, j) - indelpenalty)
+          val cost1 = (s(i, j - 1) - indelpenalty)
+          val cost2 =
+            (s(i - 1, j - 1) + scores((v.charAt(i - 1), w.charAt(j - 1))))
+
+          ar(0) = cost0
+          ar(1) = cost1
+          ar(2) = cost2
+
+          var k = 0
+          var maxi = 0
+          var max = Int.MinValue
+          while (k < 3) {
+            val c = ar(k)
+            if (c > max) {
+              maxi = k
+              max = c
+            }
+            k += 1
+          }
+
+          (maxi, max)
+
+        }
+
+        b(i - 1, j - 1) = move._1
+        s(i, j) = move._2
+
+        j += 1
+      }
+      i += 1
     }
+
     val (maxCol, max) = s.maxInRow(n)
 
     (b, max, n - 1, maxCol - 1)
@@ -330,23 +361,44 @@ object FittingPairwiseAlignment {
     for (j <- 0 to m) {
       s(0, j) = -1 * j * indelpenalty
     }
-    for (i <- 1 to n; j <- 1 to m) {
-      val move = List(
-        0 -> (s(i - 1, j) - indelpenalty),
-        1 -> (s(i, j - 1) - indelpenalty),
-        2 -> (s(i - 1, j - 1) + scoresInt(vInt(i - 1), wInt(j - 1)))
-      ).maxBy(_._2)
-      b(i - 1, j - 1) = move._1
-      s(i, j) = move._2
+    var i = 1
+    val ar = Array.ofDim[Int](3)
+    while (i <= n) {
+      var j = 1
+      while (j <= m) {
+        val move = {
+          val cost0 = (s(i - 1, j) - indelpenalty)
+          val cost1 = (s(i, j - 1) - indelpenalty)
+          val cost2 = (s(i - 1, j - 1) + scoresInt(vInt(i - 1), wInt(j - 1)))
+          ar(0) = cost0
+          ar(1) = cost1
+          ar(2) = cost2
 
+          var k = 0
+          var maxi = 0
+          var max = Int.MinValue
+          while (k < 3) {
+            val c = ar(k)
+            if (c > max) {
+              maxi = k
+              max = c
+            }
+            k += 1
+          }
+
+          (maxi, max)
+
+        }
+        b(i - 1, j - 1) = move._1
+        s(i, j) = move._2
+        j += 1
+      }
+      i += 1
     }
-    s(n, m) = (0 to n map (i => s(i, m)) max)
-    val (mi, mj) = ((0 until s.rows).iterator
-      .flatMap { i => (0 until s.cols).iterator.map { j => (i, j) } })
-      .find(x => s(x._1, x._2) == s(n, m) && x._2 == m)
-      .get
 
-    (b, s(n, m), mi - 1, mj - 1)
+    val (maxLoc, max) = s.maxInCol(m)
+
+    (b, max, maxLoc - 1, m - 1)
   }
 
   private def fittingAlignmentEmit(
