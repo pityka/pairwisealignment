@@ -3,6 +3,7 @@
  *
  * Copyright (c) 2015 ECOLE POLYTECHNIQUE FEDERALE DE LAUSANNE, Switzerland,
  * Group Fellay
+ * Copyright (c) 2020 Istvan Bartha for changes made after 2015
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
