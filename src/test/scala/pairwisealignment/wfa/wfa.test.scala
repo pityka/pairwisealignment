@@ -6,6 +6,22 @@ import munit.FunSuite
 
 class WFASpec extends FunSuite {
 
+  def testEditDistance(q: String, t: String) = {
+    val t1 = System.nanoTime
+    val score1 =
+      WFA.editDistance(q, t)
+    val wfaElapsed = System.nanoTime - t1
+
+    val t2 = System.nanoTime
+    val score2 = GlobalPairwiseAlignment.editDistance(
+      q,
+      t
+    )
+    val dpElapsed = System.nanoTime - t2
+
+    assertEquals(score1, score2)
+    wfaElapsed.toDouble / dpElapsed
+  }
   def testAgainstDP(q: String, t: String) = {
     val t1 = System.nanoTime
     val (score1, _, qa1, ta1) =
@@ -68,6 +84,7 @@ class WFASpec extends FunSuite {
     } mkString
 
     testAgainstDP(s1d, s2d)
+    testEditDistance(s1d, s2d)
   }
 
   println(

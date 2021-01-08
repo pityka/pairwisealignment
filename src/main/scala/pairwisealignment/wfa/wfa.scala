@@ -32,6 +32,9 @@ case class Deletion(n: Int) extends Op
 
 object WFA {
 
+  def editDistance(s1: String, s2: String) =
+    globalAffineAlignment(s1, s2, 1, 0, 1)._1
+
   /** Global affine pairwise alignment with the Wavefront Alignment algorithm
     * https://doi.org/10.1093/bioinformatics/btaa777
     *
@@ -50,7 +53,6 @@ object WFA {
       e: Int
   ) = {
     require(x > 0)
-    require(o > 0)
     require(e > 0)
     val q = qString.getBytes("US-ASCII")
     val t = tString.getBytes("US-ASCII")
