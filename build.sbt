@@ -1,5 +1,5 @@
 lazy val commonSettings = Seq(
-  scalaVersion := "2.12.12",
+  scalaVersion := "2.12.13",
   parallelExecution in Test := false,
   scalacOptions ++= Seq(
     "-opt:l:method",
@@ -63,12 +63,39 @@ lazy val commonSettings = Seq(
   cancelable in Global := true
 )
 
-lazy val root = (project in file("."))
+lazy val core = crossProject(JVMPlatform, NativePlatform)
+  .crossType(CrossType.Full)
+  .in(file("core"))
   .settings(commonSettings: _*)
   .settings(
     name := "pairwisealignment",
     libraryDependencies ++= Seq(
-      "org.scalameta" %% "munit" % "0.7.1" % Test
+      "org.scalameta" %%% "munit" % "0.7.21" % Test
     ),
     testFrameworks += new TestFramework("munit.Framework")
+  )
+  .nativeSettings(
+    fork := false,
+    nativeLinkStubs := true,
+    nativeMode := "release-full"
+  )
+
+lazy val bench = crossProject(JVMPlatform, NativePlatform)
+  .crossType(CrossType.Pure)
+  .in(file("bench"))
+  .settings(commonSettings: _*)
+  .settings(
+    name := "pairwisealignment-bench"
+  )
+  .nativeSettings(
+    fork := false,
+    nativeLinkStubs := true,
+    nativeMode := "release-full"
+  )
+  .dependsOn(core)
+
+lazy val root = (project in file("."))
+  .settings(commonSettings: _*)
+  .settings(
+    publishArtifact := false
   )
