@@ -70,16 +70,16 @@ class WFASpec extends FunSuite {
 
     val s1 = 0 until length map (_ => alphabet(rng.nextInt(4))) mkString
     val s2 =
-      s1.map(c => if (rng.nextDouble < 0.1) alphabet(rng.nextInt(4)) else c) mkString
+      s1.map(c => if (rng.nextDouble() < 0.1) alphabet(rng.nextInt(4)) else c) mkString
 
     val s1d = s1.flatMap { c =>
-      if (rng.nextDouble < 0.05) Nil
-      else if (rng.nextDouble < 0.05) List(alphabet(rng.nextInt(4)))
+      if (rng.nextDouble() < 0.05) Nil
+      else if (rng.nextDouble() < 0.05) List(alphabet(rng.nextInt(4)))
       else List(c)
     } mkString
     val s2d = s2.flatMap { c =>
-      if (rng.nextDouble < 0.05) Nil
-      else if (rng.nextDouble < 0.05) List(alphabet(rng.nextInt(4)))
+      if (rng.nextDouble() < 0.05) Nil
+      else if (rng.nextDouble() < 0.05) List(alphabet(rng.nextInt(4)))
       else List(c)
     } mkString
 

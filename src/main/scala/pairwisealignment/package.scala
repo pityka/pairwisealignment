@@ -186,7 +186,7 @@ object OverlapPairwiseAlignment {
       }
     }
 
-    val (a, b) = loop(v.size - 1, w.size - 1, SB.newBuilder, SB.newBuilder)
+    val (a, b) = loop(v.size - 1, w.size - 1, new SB, new SB)
     (a.reverse.toString, b.reverse.toString)
   }
 
@@ -339,7 +339,7 @@ object FittingPairwiseAlignment {
         else loop(i, j, 1, acc1, acc2)
       }
     }
-    val (a, b) = loop(v.size - 1, w.size - 1, 2, SB.newBuilder, SB.newBuilder)
+    val (a, b) = loop(v.size - 1, w.size - 1, 2, new SB, new SB)
     a.reverse.toString -> b.reverse.toString
   }
 
@@ -427,7 +427,7 @@ object FittingPairwiseAlignment {
       }
     }
 
-    val (a, b) = loop(v.size - 1, w.size - 1, SB.newBuilder, SB.newBuilder)
+    val (a, b) = loop(v.size - 1, w.size - 1, new SB, new SB)
     (a.reverse.toString(), b.reverse.toString())
   }
 
@@ -780,7 +780,7 @@ object GlobalPairwiseAlignment {
         else loop(i, j, 1, acc1, acc2)
       }
     }
-    val (a, b) = loop(v.size - 1, w.size - 1, 2, SB.newBuilder, SB.newBuilder)
+    val (a, b) = loop(v.size - 1, w.size - 1, 2, new SB, new SB)
     (a.reverse.toString, b.reverse.toString)
   }
 
@@ -809,7 +809,7 @@ object GlobalPairwiseAlignment {
           loop(i - 1, j - 1, acc1.append(v.charAt(i)), acc2.append(w.charAt(j)))
       }
     }
-    val (a, b) = loop(v.size - 1, w.size - 1, SB.newBuilder, SB.newBuilder)
+    val (a, b) = loop(v.size - 1, w.size - 1, new SB, new SB)
     (a.reverse.toString, b.reverse.toString)
   }
 

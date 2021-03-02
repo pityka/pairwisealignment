@@ -32,7 +32,7 @@ class PairwiseAlignmentSpec extends FunSuite {
   val blosum = {
     val lines = io.Source
       .fromFile(getClass.getResource("/").getPath + "BLOSUM62.txt")
-      .getLines
+      .getLines()
       .toList
       .map(_.split("\\s+"))
     lines.tail.zipWithIndex.flatMap {
@@ -48,7 +48,7 @@ class PairwiseAlignmentSpec extends FunSuite {
   val pam = {
     val lines = io.Source
       .fromFile(getClass.getResource("/").getPath + "PAM250_1.txt")
-      .getLines
+      .getLines()
       .toList
       .map(_.split("\\s+"))
     lines.tail.zipWithIndex.flatMap {
@@ -419,7 +419,7 @@ class PairwiseAlignmentSpec extends FunSuite {
       FittingPairwiseAlignment.fittingAffineAlignment(
         "AAAATTTGGGTTTTAAAA",
         "TTTCCCTTTT",
-        score.mapValues(_ * 10),
+        score.view.mapValues(_ * 10).toMap,
         1,
         1
       ),
@@ -429,7 +429,7 @@ class PairwiseAlignmentSpec extends FunSuite {
       FittingPairwiseAlignment.fittingAffineAlignment(
         "AAAATTTGGGTTTTAAAA",
         "TTTCCCTTTT",
-        score.mapValues(_ * 10),
+        score.view.mapValues(_ * 10).toMap,
         10,
         1
       ),
