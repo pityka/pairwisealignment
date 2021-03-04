@@ -3,5 +3,5 @@
 
 ![CI](https://github.com/pityka/pairwisealignment/workflows/CI/badge.svg)
 
-[![maven](https://img.shields.io/maven-central/v/io.github.pityka/pairwisealignment_2.12.svg)](https://repo1.maven.org/maven2/io/github/pityka/pairwisealignment_2.12/)
+[![maven](https://img.shields.io/maven-central/v/io.github.pityka/pairwisealignment_2.13.svg)](https://repo1.maven.org/maven2/io/github/pityka/pairwisealignment_2.13/)
 
