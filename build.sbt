@@ -1,5 +1,6 @@
 lazy val commonSettings = Seq(
   scalaVersion := "2.13.5",
+  crossScalaVersions := Seq("2.12.13", "2.13.5"),
   parallelExecution in Test := false,
   scalacOptions ++= Seq(
     "-opt:l:method",

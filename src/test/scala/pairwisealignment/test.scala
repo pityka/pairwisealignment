@@ -419,7 +419,7 @@ class PairwiseAlignmentSpec extends FunSuite {
       FittingPairwiseAlignment.fittingAffineAlignment(
         "AAAATTTGGGTTTTAAAA",
         "TTTCCCTTTT",
-        score.view.mapValues(_ * 10).toMap,
+        score.view.map(v => (v._1, v._2 * 10)).toMap,
         1,
         1
       ),
@@ -429,7 +429,7 @@ class PairwiseAlignmentSpec extends FunSuite {
       FittingPairwiseAlignment.fittingAffineAlignment(
         "AAAATTTGGGTTTTAAAA",
         "TTTCCCTTTT",
-        score.view.mapValues(_ * 10).toMap,
+        score.view.map(v => (v._1, v._2 * 10)).toMap,
         10,
         1
       ),

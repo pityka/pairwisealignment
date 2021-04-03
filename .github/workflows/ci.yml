@@ -1,6 +1,9 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches-ignore: [master]
 
 jobs:
   build:
@@ -12,10 +15,6 @@ jobs:
     - uses: olafurpg/setup-scala@v10
     - uses: actions/setup-node@v1
     - name: Compile
-      run: sbt clean coverage test coverageAggregate
-    - name: Codecov
-      uses: codecov/codecov-action@v1.0.2
-      if: github.actor == 'pityka'
-      with:
-        token: ${{secrets.CODECOV_TOKEN}}
+      run: sbt clean +test
+    
 
