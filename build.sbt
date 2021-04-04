@@ -1,3 +1,21 @@
+inThisBuild(
+  List(
+    organization := "io.github.pityka",
+    homepage := Some(url("https://pityka.github.io/pairwisealignment/")),
+    licenses := List(
+      ("Apache-2.0", url("https://opensource.org/licenses/Apache-2.0"))
+    ),
+    developers := List(
+      Developer(
+        "pityka",
+        "Istvan Bartha",
+        "bartha.pityu@gmail.com",
+        url("https://github.com/pityka/pairwisealignment")
+      )
+    )
+  )
+)
+
 lazy val commonSettings = Seq(
   scalaVersion := "2.13.5",
   crossScalaVersions := Seq("2.12.13", "2.13.5"),
@@ -39,17 +57,6 @@ lazy val commonSettings = Seq(
   ),
   scalacOptions in (Compile, console) ~= (_ filterNot (_ == "-Xfatal-warnings"))
 ) ++ Seq(
-  organization := "io.github.pityka",
-  licenses += ("MIT", url("https://opensource.org/licenses/MIT")),
-  pomExtra in Global := {
-    <url>https://github.com/pityka/pairwisealignment</url>
-      <developers>
-        <developer>
-          <id>pityka</id>
-          <name>Istvan Bartha</name>
-        </developer>
-      </developers>
-  },
   fork := true,
   cancelable in Global := true
 )
