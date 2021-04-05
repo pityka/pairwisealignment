@@ -637,10 +637,12 @@ object GlobalPairwiseAlignment {
               b(i - 1, j - 1) = 0
             } else if (s(i, j) == s(i, j - 1) - indelpenalty) {
               b(i - 1, j - 1) = 1
-            } else if (s(i, j) == s(i - 1, j - 1) + scoresInt(
-                         vInt(i - 1),
-                         wInt(j - 1)
-                       )) {
+            } else if (
+              s(i, j) == s(i - 1, j - 1) + scoresInt(
+                vInt(i - 1),
+                wInt(j - 1)
+              )
+            ) {
               b(i - 1, j - 1) = 2
             }
           }

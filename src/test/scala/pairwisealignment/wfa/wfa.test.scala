@@ -45,13 +45,12 @@ class WFASpec extends FunSuite {
 
     val score3 = {
       val (s, o) = (qa1 zip ta1)
-        .foldLeft((0, 0)) {
-          case ((accScore, openGap), (a, b)) =>
-            if (a == b && b != '-')
-              (accScore + openGap * 2 + (if (openGap > 0) 6 else 0), 0)
-            else if (a != b && b != '-' && a != '-')
-              (accScore + 4 + openGap * 2 + (if (openGap > 0) 6 else 0), 0)
-            else (accScore, openGap + 1)
+        .foldLeft((0, 0)) { case ((accScore, openGap), (a, b)) =>
+          if (a == b && b != '-')
+            (accScore + openGap * 2 + (if (openGap > 0) 6 else 0), 0)
+          else if (a != b && b != '-' && a != '-')
+            (accScore + 4 + openGap * 2 + (if (openGap > 0) 6 else 0), 0)
+          else (accScore, openGap + 1)
         }
       s + o * 2 + (if (o > 0) 6 else 0)
     }
@@ -70,7 +69,9 @@ class WFASpec extends FunSuite {
 
     val s1 = 0 until length map (_ => alphabet(rng.nextInt(4))) mkString
     val s2 =
-      s1.map(c => if (rng.nextDouble() < 0.1) alphabet(rng.nextInt(4)) else c) mkString
+      s1.map(c =>
+        if (rng.nextDouble() < 0.1) alphabet(rng.nextInt(4)) else c
+      ) mkString
 
     val s1d = s1.flatMap { c =>
       if (rng.nextDouble() < 0.05) Nil
@@ -88,7 +89,9 @@ class WFASpec extends FunSuite {
   }
 
   println(
-    "Avg WFA/DP runtime ratio: " + (1 to 20000 map { _ => testRandom() }).sum / 20000d
+    "Avg WFA/DP runtime ratio: " + (1 to 20000 map { _ =>
+      testRandom()
+    }).sum / 20000d
   )
 
   test("global affine alignment") {
