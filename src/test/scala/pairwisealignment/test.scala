@@ -35,14 +35,12 @@ class PairwiseAlignmentSpec extends FunSuite {
       .getLines()
       .toList
       .map(_.split("\\s+"))
-    lines.tail.zipWithIndex.flatMap {
-      case (line, _) =>
-        lines.head.drop(1).zipWithIndex.map {
-          case (c1, i1) =>
-            val c2 = line.head
-            val score = line.tail(i1)
-            (c1.charAt(0), c2.charAt(0)) -> score.toInt
-        }
+    lines.tail.zipWithIndex.flatMap { case (line, _) =>
+      lines.head.drop(1).zipWithIndex.map { case (c1, i1) =>
+        val c2 = line.head
+        val score = line.tail(i1)
+        (c1.charAt(0), c2.charAt(0)) -> score.toInt
+      }
     }.toMap
   }
   val pam = {
@@ -51,14 +49,12 @@ class PairwiseAlignmentSpec extends FunSuite {
       .getLines()
       .toList
       .map(_.split("\\s+"))
-    lines.tail.zipWithIndex.flatMap {
-      case (line, _) =>
-        lines.head.drop(1).zipWithIndex.map {
-          case (c1, i1) =>
-            val c2 = line.head
-            val score = line.tail(i1)
-            (c1.charAt(0), c2.charAt(0)) -> score.toInt
-        }
+    lines.tail.zipWithIndex.flatMap { case (line, _) =>
+      lines.head.drop(1).zipWithIndex.map { case (c1, i1) =>
+        val c2 = line.head
+        val score = line.tail(i1)
+        (c1.charAt(0), c2.charAt(0)) -> score.toInt
+      }
     }.toMap
   }
 
