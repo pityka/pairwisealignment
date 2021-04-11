@@ -15,6 +15,6 @@ jobs:
     - uses: olafurpg/setup-scala@v10
     - uses: actions/setup-node@v1
     - name: Compile
-      run: sbt clean +test
+      run: sbt clean +test +mimaReportBinaryIssues
     
 
