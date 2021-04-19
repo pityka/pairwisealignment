@@ -69,7 +69,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "pairwisealignment",
     libraryDependencies ++= Seq(
-      "org.scalameta" %% "munit" % "0.7.23" % Test
+      "org.scalameta" %% "munit" % "0.7.25" % Test
     ),
     testFrameworks += new TestFramework("munit.Framework")
   )
