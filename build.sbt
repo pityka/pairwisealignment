@@ -20,9 +20,13 @@ lazy val commonSettings = Seq(
   scalaVersion := "2.13.5",
   crossScalaVersions := Seq("2.12.13", "2.13.5", "3.0.0"),
   parallelExecution in Test := false,
-  mimaPreviousArtifacts := Set(
-    organization.value %% moduleName.value % "2.2.3"
-  ),
+  mimaPreviousArtifacts := (CrossVersion.partialVersion(
+    scalaVersion.value
+  ) match {
+    case Some((2, _)) => Set(organization.value %% moduleName.value % "2.2.3")
+    case Some((3, _)) => Set()
+    case _            => ???
+  }),
   scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((3, _)) =>
       Seq(
