@@ -38,12 +38,18 @@ object WFA {
   /** Global affine pairwise alignment with the Wavefront Alignment algorithm
     * https://doi.org/10.1093/bioinformatics/btaa777
     *
-    * @param qString input string, ascii
-    * @param tString input string, ascii
-    * @param x mismatch penalty, positive integer
-    * @param o gap open penalty, positive integer
-    * @param e gap extension penalty, positive integer
-    * @return (score, cigar, aligned Q, aligned T)
+    * @param qString
+    *   input string, ascii
+    * @param tString
+    *   input string, ascii
+    * @param x
+    *   mismatch penalty, positive integer
+    * @param o
+    *   gap open penalty, positive integer
+    * @param e
+    *   gap extension penalty, positive integer
+    * @return
+    *   (score, cigar, aligned Q, aligned T)
     */
   def globalAffineAlignment(
       qString: String,
