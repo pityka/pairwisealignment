@@ -18,7 +18,7 @@ inThisBuild(
 
 lazy val commonSettings = Seq(
   scalaVersion := "2.13.6",
-  crossScalaVersions := Seq("2.12.14", "2.13.6", "3.0.2"),
+  crossScalaVersions := Seq("2.12.15", "2.13.6", "3.0.1"),
   parallelExecution in Test := false,
   mimaPreviousArtifacts := (CrossVersion.partialVersion(
     scalaVersion.value
@@ -88,7 +88,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "pairwisealignment",
     libraryDependencies ++= Seq(
-      "org.scalameta" %% "munit" % "0.7.28" % Test
+      "org.scalameta" %% "munit" % "0.7.29" % Test
     ),
     testFrameworks += new TestFramework("munit.Framework")
   )
