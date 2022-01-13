@@ -17,8 +17,8 @@ inThisBuild(
 )
 
 lazy val commonSettings = Seq(
-  scalaVersion := "2.13.7",
-  crossScalaVersions := Seq("2.12.15", "2.13.7", "3.0.1"),
+  scalaVersion := "2.13.8",
+  crossScalaVersions := Seq("2.12.15", "2.13.8", "3.0.1"),
   parallelExecution in Test := false,
   mimaPreviousArtifacts := (CrossVersion.partialVersion(
     scalaVersion.value
