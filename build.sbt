@@ -16,6 +16,13 @@ inThisBuild(
   )
 )
 
+ThisBuild / versionScheme := Some("early-semver")
+
+ThisBuild / versionPolicyIntention := Compatibility.None
+ThisBuild / versionPolicyIgnoredInternalDependencyVersions := Some(
+  "^\\d+\\.\\d+\\.\\d+\\+\\d+".r
+) 
+
 lazy val commonSettings = Seq(
   scalaVersion := "2.13.8",
   crossScalaVersions := Seq("2.12.15", "2.13.8", "3.0.1"),
