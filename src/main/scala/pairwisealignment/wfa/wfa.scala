@@ -64,6 +64,8 @@ object WFA {
     val t = tString.getBytes("US-ASCII")
     require(q.length == qString.length)
     require(t.length == tString.length)
+    require(qString.length > 0)
+    require(tString.length > 0)
 
     val n = q.length
     val m = t.length

@@ -94,6 +94,19 @@ class WFASpec extends FunSuite {
     }).sum / 20000d
   )
 
+  test("empty input") {
+    intercept[java.lang.IllegalArgumentException](
+      WFA
+        .globalAffineAlignment(
+          "",
+          "",
+          x = 4,
+          o = 6,
+          e = 2
+        )
+    )
+  }
+
   test("global affine alignment") {
     assertEquals(
       {
