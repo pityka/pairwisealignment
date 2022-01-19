@@ -18,7 +18,7 @@ inThisBuild(
 
 ThisBuild / versionScheme := Some("early-semver")
 
-ThisBuild / versionPolicyIntention := Compatibility.None
+ThisBuild / versionPolicyIntention := Compatibility.BinaryAndSourceCompatible
 ThisBuild / versionPolicyIgnoredInternalDependencyVersions := Some(
   "^\\d+\\.\\d+\\.\\d+\\+\\d+".r
 ) 
