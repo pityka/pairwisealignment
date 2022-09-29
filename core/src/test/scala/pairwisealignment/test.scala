@@ -31,7 +31,7 @@ class PairwiseAlignmentSpec extends FunSuite {
 
   val blosum = {
     val lines = io.Source
-      .fromFile(getClass.getResource("/").getPath + "BLOSUM62.txt")
+      .fromInputStream(getClass.getResourceAsStream("/BLOSUM62.txt"))
       .getLines()
       .toList
       .map(_.split("\\s+"))

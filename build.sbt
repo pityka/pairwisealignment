@@ -90,7 +90,7 @@ lazy val commonSettings = Seq(
   cancelable in Global := true
 )
 
-lazy val root = (project in file("."))
+lazy val core = (project in file("core"))
   .settings(commonSettings: _*)
   .settings(
     name := "pairwisealignment",
@@ -98,4 +98,21 @@ lazy val root = (project in file("."))
       "org.scalameta" %% "munit" % "0.7.29" % Test
     ),
     testFrameworks += new TestFramework("munit.Framework")
+  )
+
+lazy val coreJS = project
+  .in(file("core"))
+  .settings(commonSettings)
+  .settings(
+    name := "pairwisealignment-js",
+    target := file("targetJS"),
+    test := {}
+  )
+  .enablePlugins(ScalaJSPlugin)
+
+  lazy val root = project.in(file(".")).
+  aggregate(core, coreJS).
+  settings(
+    publish := {},
+    publishLocal := {},
   )

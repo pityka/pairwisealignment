@@ -5,3 +5,4 @@ target/
 .vscode/settings.json
 project/project/metals.sbt
 project/project/project/metals.sbt
+targetJS/
