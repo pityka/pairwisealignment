@@ -21,11 +21,11 @@ ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / versionPolicyIntention := Compatibility.BinaryAndSourceCompatible
 ThisBuild / versionPolicyIgnoredInternalDependencyVersions := Some(
   "^\\d+\\.\\d+\\.\\d+\\+\\d+".r
-) 
+)
 
 lazy val commonSettings = Seq(
   scalaVersion := "2.13.8",
-  crossScalaVersions := Seq("2.12.15", "2.13.8", "3.0.1"),
+  crossScalaVersions := Seq("2.12.18", "2.13.8", "3.0.1"),
   parallelExecution in Test := false,
   mimaPreviousArtifacts := (CrossVersion.partialVersion(
     scalaVersion.value
@@ -110,9 +110,10 @@ lazy val coreJS = project
   )
   .enablePlugins(ScalaJSPlugin)
 
-  lazy val root = project.in(file(".")).
-  aggregate(core, coreJS).
-  settings(
+lazy val root = project
+  .in(file("."))
+  .aggregate(core, coreJS)
+  .settings(
     publish := {},
-    publishLocal := {},
+    publishLocal := {}
   )
