@@ -21,7 +21,7 @@ ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / versionPolicyIntention := Compatibility.BinaryAndSourceCompatible
 ThisBuild / versionPolicyIgnoredInternalDependencyVersions := Some(
   "^\\d+\\.\\d+\\.\\d+\\+\\d+".r
-) 
+)
 
 lazy val commonSettings = Seq(
   scalaVersion := "2.13.8",
@@ -95,7 +95,7 @@ lazy val core = (project in file("core"))
   .settings(
     name := "pairwisealignment",
     libraryDependencies ++= Seq(
-      "org.scalameta" %% "munit" % "0.7.29" % Test
+      "org.scalameta" %% "munit" % "1.0.1" % Test
     ),
     testFrameworks += new TestFramework("munit.Framework")
   )
@@ -110,9 +110,10 @@ lazy val coreJS = project
   )
   .enablePlugins(ScalaJSPlugin)
 
-  lazy val root = project.in(file(".")).
-  aggregate(core, coreJS).
-  settings(
+lazy val root = project
+  .in(file("."))
+  .aggregate(core, coreJS)
+  .settings(
     publish := {},
-    publishLocal := {},
+    publishLocal := {}
   )
