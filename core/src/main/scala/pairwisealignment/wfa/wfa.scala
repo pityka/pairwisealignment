@@ -212,7 +212,7 @@ object WFA {
       val maxScoreMismatch = math.min(qLength, tLength) * x
       val maxScoreGap = o + math.abs(qLength - tLength) * e
       val maxScore = maxScoreMismatch + maxScoreGap
-      val ar = Array.ofDim[WFC](maxScore)
+      val ar = Array.ofDim[WFC](maxScore + 1)
       WF(ar)
     }
   }

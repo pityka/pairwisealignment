@@ -189,4 +189,48 @@ class WFASpec extends FunSuite {
     )
 
   }
+
+  def runWithTimeout[A](millis: Long)(body: => A): Option[A] = {
+    val result = new java.util.concurrent.atomic.AtomicReference[Option[A]](None)
+    val thread = new Thread(() => result.set(Some(body)))
+    thread.setDaemon(true)
+    thread.start()
+    thread.join(millis)
+    result.get()
+  }
+
+  test("editDistance does not hang when the optimal score equals the wavefront upper bound") {
+    val q = "A"
+    val t = "CC"
+    val expected = GlobalPairwiseAlignment.editDistance(q, t)
+    assertEquals(runWithTimeout(5000)(WFA.editDistance(q, t)), Some(expected))
+  }
+
+  test("globalAffineAlignment does not hang when the optimal score equals the wavefront upper bound") {
+    val q = "A"
+    val t = "CC"
+    val x = 4
+    val o = 6
+    val e = 2
+    val scores = {
+      val c = (q.toSeq ++ t.toSeq).distinct
+      for {
+        i <- c; j <- c
+      } yield (i, j) -> (if (i != j) -x else 0)
+    }
+    val expected = {
+      val (dpScore, _, _) = GlobalPairwiseAlignment.globalAffineAlignment(
+        q,
+        t,
+        score = scores.toMap,
+        gapopen = o + e,
+        gapextension = e
+      )
+      -dpScore
+    }
+    assertEquals(
+      runWithTimeout(5000)(WFA.globalAffineAlignment(q, t, x, o, e)._1),
+      Some(expected)
+    )
+  }
 }
