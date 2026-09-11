@@ -233,6 +233,8 @@ object WFA {
     val wfM = WF(bound)
     val wfI = WF(bound)
     val wfD = WF(bound)
+    val qb = java.nio.ByteBuffer.wrap(q).order(java.nio.ByteOrder.LITTLE_ENDIAN)
+    val tb = java.nio.ByteBuffer.wrap(t).order(java.nio.ByteOrder.LITTLE_ENDIAN)
 
     {
       val wfc = WFC.empty(0, 0)
@@ -246,7 +248,7 @@ object WFA {
     while (!break) {
       val w = wfM.getWavefront(s)
       if (w != null) {
-        wfExtend(w, q, n, t, m)
+        wfExtend(w, qb, q, n, tb, t, m)
       }
       val offset = wfM.getOffset(s, mainDiagonal)
       if (offset != Int.MinValue && offset >= mainDiagonalLength) {
@@ -345,23 +347,41 @@ object WFA {
 
   private def wfExtend(
       wf: WFC,
+      qb: java.nio.ByteBuffer,
       q: Array[Byte],
       qLength: Int,
+      tb: java.nio.ByteBuffer,
       t: Array[Byte],
       tLength: Int
   ): Unit = {
     var k = wf.low
     val n = wf.high
+    val qEnd = qLength - 7
+    val tEnd = tLength - 7
     while (k <= n) {
       val offset = wf.getDiagonal(k)
       if (offset != Int.MinValue) {
         var v = offset - k
         var h = offset
-        while (v < qLength && h < tLength && q(v) == t(h)) {
-          v += 1
-          h += 1
+        var stop = false
+        while (!stop && v < qEnd && h < tEnd) {
+          val xor = qb.getLong(v) ^ tb.getLong(h)
+          if (xor == 0L) {
+            v += 8
+            h += 8
+          } else {
+            val adv = java.lang.Long.numberOfTrailingZeros(xor) >>> 3
+            v += adv
+            h += adv
+            stop = true
+          }
         }
-
+        if (!stop) {
+          while (v < qLength && h < tLength && q(v) == t(h)) {
+            v += 1
+            h += 1
+          }
+        }
         wf.updateDiagonal(k, h)
       }
       k += 1
