@@ -132,6 +132,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("core"))
   .settings(commonSettings)
   .settings(
+    name := "pairwisealignment",
     libraryDependencies ++= Seq(
       "org.scalameta" %% "munit" % "1.3.6" % Test
     )
