@@ -166,10 +166,10 @@ object WFA {
     }
   }
   private object WFC {
-    def empty(low: Int, high: Int, qLength: Int, tLength: Int) = {
-      val ar = Array.ofDim[Int](qLength + tLength + 1)
+    def empty(low: Int, high: Int) = {
+      val ar = Array.ofDim[Int](high - low + 1)
       ju.Arrays.fill(ar, Int.MinValue)
-      WFC(low, high, qLength, ar)
+      WFC(low, high, -low, ar)
     }
   }
   private case class WF(
@@ -235,7 +235,7 @@ object WFA {
     val wfD = WF(bound)
 
     {
-      val wfc = WFC.empty(0, 0, n, m)
+      val wfc = WFC.empty(0, 0)
       wfc.updateDiagonal(0, 0)
       wfM.addWavefront(0, wfc)
     }
@@ -256,7 +256,7 @@ object WFA {
         break = true
       } else {
         s += 1
-        wfNext(wfM, wfI, wfD, n, m, s, x, o, e)
+        wfNext(wfM, wfI, wfD, s, x, o, e)
       }
     }
     (s, wfM, wfI, wfD, exceeded)
@@ -266,8 +266,6 @@ object WFA {
       wfM: WF,
       wfI: WF,
       wfD: WF,
-      qLength: Int,
-      tLength: Int,
       s: Int,
       x: Int,
       o: Int,
@@ -321,34 +319,19 @@ object WFA {
         )
         if (m != Int.MinValue) {
           if (nM == null) {
-            nM = WFC.empty(
-              low = low,
-              high = hi,
-              qLength = qLength,
-              tLength = tLength
-            )
+            nM = WFC.empty(low = low, high = hi)
           }
           nM.updateDiagonal(k, m)
         }
         if (i != Int.MinValue) {
           if (nI == null) {
-            nI = WFC.empty(
-              low = low,
-              high = hi,
-              qLength = qLength,
-              tLength = tLength
-            )
+            nI = WFC.empty(low = low, high = hi)
           }
           nI.updateDiagonal(k, i)
         }
         if (d != Int.MinValue) {
           if (nD == null) {
-            nD = WFC.empty(
-              low = low,
-              high = hi,
-              qLength = qLength,
-              tLength = tLength
-            )
+            nD = WFC.empty(low = low, high = hi)
           }
           nD.updateDiagonal(k, d)
         }
