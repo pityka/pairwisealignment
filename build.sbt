@@ -142,6 +142,9 @@ lazy val root = project
   .in(file("."))
   .aggregate(core.js,core.jvm,core.native)
   .settings(
+    scalaVersion := "2.13.18",
+    crossScalaVersions := Nil,
     publish := {},
-    publishLocal := {}
+    publishLocal := {},
+    publishArtifact := false
   )
