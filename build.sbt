@@ -21,7 +21,7 @@ ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / versionPolicyIntention := Compatibility.BinaryAndSourceCompatible
 ThisBuild / versionPolicyIgnoredInternalDependencyVersions := Some(
   "^\\d+\\.\\d+\\.\\d+\\+\\d+".r
-) 
+)
 
 lazy val githubPackagesSettings: Seq[Def.Setting[_]] =
   if (sys.env.get("GITHUB_PACKAGES_PUBLISH").exists(_.nonEmpty))
@@ -61,8 +61,8 @@ lazy val gitlabPackagesSettings: Seq[Def.Setting[_]] =
   }
 
 lazy val commonSettings = Seq(
-  scalaVersion := "2.13.8",
-  crossScalaVersions := Seq("2.12.15", "2.13.8", "3.0.1"),
+  scalaVersion := "2.13.18",
+  crossScalaVersions := Seq("2.13.18", "3.3.8"),
   parallelExecution in Test := false,
   mimaPreviousArtifacts := (CrossVersion.partialVersion(
     scalaVersion.value
@@ -123,33 +123,24 @@ lazy val commonSettings = Seq(
   }),
   scalacOptions in (Compile, console) ~= (_ filterNot (_ == "-Xfatal-warnings"))
 ) ++ Seq(
-  fork := true,
+  fork := false,
   cancelable in Global := true
 ) ++ githubPackagesSettings ++ gitlabPackagesSettings
 
-lazy val core = (project in file("core"))
-  .settings(commonSettings: _*)
-  .settings(
-    name := "pairwisealignment",
-    libraryDependencies ++= Seq(
-      "org.scalameta" %% "munit" % "0.7.29" % Test
-    ),
-    testFrameworks += new TestFramework("munit.Framework")
-  )
-
-lazy val coreJS = project
+lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  .crossType(CrossType.Pure) 
   .in(file("core"))
   .settings(commonSettings)
   .settings(
-    name := "pairwisealignment-js",
-    target := file("targetJS"),
-    test := {}
+    libraryDependencies ++= Seq(
+      "org.scalameta" %% "munit" % "1.3.6" % Test
+    )
   )
-  .enablePlugins(ScalaJSPlugin)
 
-  lazy val root = project.in(file(".")).
-  aggregate(core, coreJS).
-  settings(
+lazy val root = project
+  .in(file("."))
+  .aggregate(core.js,core.jvm,core.native)
+  .settings(
     publish := {},
-    publishLocal := {},
+    publishLocal := {}
   )
