@@ -32,8 +32,17 @@ case class Deletion(n: Int) extends Op
 
 object WFA {
 
-  def editDistance(s1: String, s2: String) =
+  def editDistance(s1: String, s2: String): Int =
     globalAffineAlignment(s1, s2, 1, 0, 1)._1
+
+  def editDistance(s1: String, s2: String, maxDistance: Int): Int = {
+    require(maxDistance >= 0)
+    val q = toBytes(s1)
+    val t = toBytes(s2)
+    val (s, _, _, _, exceeded) =
+      alignScore(q, q.length, t, t.length, x = 1, o = 0, e = 1, cap = maxDistance)
+    if (exceeded) maxDistance + 1 else s
+  }
 
   /** Global affine pairwise alignment with the Wavefront Alignment algorithm
     * https://doi.org/10.1093/bioinformatics/btaa777
@@ -60,42 +69,15 @@ object WFA {
   ) = {
     require(x > 0)
     require(e > 0)
-    val q = qString.getBytes("US-ASCII")
-    val t = tString.getBytes("US-ASCII")
-    require(q.length == qString.length)
-    require(t.length == tString.length)
-    require(qString.length > 0)
-    require(tString.length > 0)
+    val q = toBytes(qString)
+    val t = toBytes(tString)
 
     val n = q.length
     val m = t.length
     val mainDiagonal = m - n
     val mainDiagonalLength = m
-    val wfM = WF(qLength = n, tLength = m, x = x, o = o, e = e)
-    val wfI = WF(qLength = n, tLength = m, x = x, o = o, e = e)
-    val wfD = WF(qLength = n, tLength = m, x = x, o = o, e = e)
-
-    {
-      val wfc = WFC.empty(0, 0, n, m)
-      wfc.updateDiagonal(0, 0)
-      wfM.addWavefront(0, wfc)
-    }
-
-    var s = 0
-    var break = false
-    while (!break) {
-      val w = wfM.getWavefront(s)
-      if (w != null) {
-        wfExtend(w, q, n, t, m)
-      }
-      val offset = wfM.getOffset(s, mainDiagonal)
-      if (offset != Int.MinValue && offset >= mainDiagonalLength) {
-        break = true
-      } else {
-        s += 1
-        wfNext(wfM, wfI, wfD, n, m, s, x, o, e)
-      }
-    }
+    val (s, wfM, wfI, wfD, _) =
+      alignScore(q, n, t, m, x = x, o = o, e = e, cap = Int.MaxValue)
     val emitter = wfBacktrack(
       wfM = wfM,
       wfI = wfI,
@@ -208,10 +190,7 @@ object WFA {
       if (score >= 0 && score < values.length) { values.update(score, wf) }
   }
   private object WF {
-    def apply(qLength: Int, tLength: Int, x: Int, o: Int, e: Int): WF = {
-      val maxScoreMismatch = math.min(qLength, tLength) * x
-      val maxScoreGap = o + math.abs(qLength - tLength) * e
-      val maxScore = maxScoreMismatch + maxScoreGap
+    def apply(maxScore: Int): WF = {
       val ar = Array.ofDim[WFC](maxScore + 1)
       WF(ar)
     }
@@ -229,6 +208,60 @@ object WFA {
   private def min(a: Int, b: Int, c: Int, d: Int) = {
     math.min(math.min(math.min(a, b), c), d)
   }
+
+  private def toBytes(s: String): Array[Byte] = {
+    val b = s.getBytes("US-ASCII")
+    require(b.length == s.length)
+    require(s.length > 0)
+    b
+  }
+
+  private def alignScore(
+      q: Array[Byte],
+      n: Int,
+      t: Array[Byte],
+      m: Int,
+      x: Int,
+      o: Int,
+      e: Int,
+      cap: Int
+  ): (Int, WF, WF, WF, Boolean) = {
+    val mainDiagonal = m - n
+    val mainDiagonalLength = m
+    val maxScore = math.min(n, m) * x + o + math.abs(n - m) * e
+    val bound = math.min(maxScore, cap)
+    val wfM = WF(bound)
+    val wfI = WF(bound)
+    val wfD = WF(bound)
+
+    {
+      val wfc = WFC.empty(0, 0, n, m)
+      wfc.updateDiagonal(0, 0)
+      wfM.addWavefront(0, wfc)
+    }
+
+    var s = 0
+    var break = false
+    var exceeded = false
+    while (!break) {
+      val w = wfM.getWavefront(s)
+      if (w != null) {
+        wfExtend(w, q, n, t, m)
+      }
+      val offset = wfM.getOffset(s, mainDiagonal)
+      if (offset != Int.MinValue && offset >= mainDiagonalLength) {
+        break = true
+      } else if (s >= bound) {
+        exceeded = true
+        break = true
+      } else {
+        s += 1
+        wfNext(wfM, wfI, wfD, n, m, s, x, o, e)
+      }
+    }
+    (s, wfM, wfI, wfD, exceeded)
+  }
+
   private def wfNext(
       wfM: WF,
       wfI: WF,

@@ -61,6 +61,15 @@ class WFASpec extends FunSuite {
     wfaElapsed.toDouble / dpElapsed
   }
 
+  def testCapped(q: String, t: String) = {
+    val d = WFA.editDistance(q, t)
+    Seq(0, d - 1, d, d + 1).filter(_ >= 0).distinct.foreach { cap =>
+      val capped = WFA.editDistance(q, t, cap)
+      if (d <= cap) assertEquals(capped, d)
+      else assertEquals(capped, cap + 1)
+    }
+  }
+
   val rng = new scala.util.Random(43)
 
   def testRandom() = {
@@ -85,6 +94,7 @@ class WFASpec extends FunSuite {
     } mkString
 
     testAgainstDP(s1d, s2d)
+    testCapped(s1d, s2d)
     testEditDistance(s1d, s2d)
   }
 
@@ -188,6 +198,21 @@ class WFASpec extends FunSuite {
       )
     )
 
+  }
+
+  test("capped edit distance") {
+    assertEquals(WFA.editDistance("GATACA", "GATACA", 0), 0)
+    assertEquals(WFA.editDistance("GATACA", "GATTCA", 0), 1)
+    assertEquals(WFA.editDistance("GATACA", "GATTCA", 1), 1)
+    assertEquals(WFA.editDistance("GATACA", "GATTCA", 5), 1)
+    assertEquals(WFA.editDistance("GATACA", "ATAC", 0), 1)
+    assertEquals(WFA.editDistance("GATACA", "ATAC", 1), 2)
+    assertEquals(WFA.editDistance("GATACA", "ATAC", 2), 2)
+    assertEquals(WFA.editDistance("GATACA", "ATAC", 10), 2)
+    assertEquals(
+      WFA.editDistance("GATACA", "ATAC", Int.MaxValue),
+      WFA.editDistance("GATACA", "ATAC")
+    )
   }
 
   def runWithTimeout[A](millis: Long)(body: => A): Option[A] = {
