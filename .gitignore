@@ -6,3 +6,4 @@ target/
 project/project/metals.sbt
 project/project/project/metals.sbt
 targetJS/
+.vscode/mcp.json
