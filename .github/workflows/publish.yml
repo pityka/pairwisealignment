@@ -1,0 +1,51 @@
+name: publish
+on:
+  push:
+    branches: [master]
+    tags: ["*"]
+jobs:
+  sonatype:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: olafurpg/setup-scala@v10
+      - uses: olafurpg/setup-gpg@v3
+      - uses: sbt/setup-sbt@v1
+      - name: Publish to Sonatype
+        run: |
+          git ls-remote --get-url origin
+          sbt test versionCheck ci-release
+        env:
+          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+          PGP_SECRET: ${{ secrets.PGP_SECRET }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+
+  github-packages:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v1
+      - uses: olafurpg/setup-scala@v10
+      - uses: sbt/setup-sbt@v1
+      - name: Publish to GitHub Packages
+        run: sbt +test versionCheck +publish
+        env:
+          GITHUB_PACKAGES_PUBLISH: "true"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+
+  gitlab-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: olafurpg/setup-scala@v10
+      - uses: sbt/setup-sbt@v1
+      - name: Publish to GitLab Packages
+        run: sbt +test versionCheck +publish
+        env:
+          GITLAB_DEPLOY_TOKEN: ${{ secrets.GITLAB_DEPLOY_TOKEN }}
+          GITLAB_DEPLOY_TOKEN_USER: "REPLACE_WITH_DEPLOY_TOKEN_USERNAME"
+          GITLAB_PROJECT_ID: "86342759"

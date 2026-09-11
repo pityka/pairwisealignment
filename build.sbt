@@ -23,6 +23,43 @@ ThisBuild / versionPolicyIgnoredInternalDependencyVersions := Some(
   "^\\d+\\.\\d+\\.\\d+\\+\\d+".r
 ) 
 
+lazy val githubPackagesSettings: Seq[Def.Setting[_]] =
+  if (sys.env.get("GITHUB_PACKAGES_PUBLISH").exists(_.nonEmpty))
+    Seq(
+      publishTo := Some(
+        "GitHub Packages" at "https://maven.pkg.github.com/pityka/pairwisealignment"
+      ),
+      credentials += Credentials(
+        "GitHub Package Registry",
+        "maven.pkg.github.com",
+        sys.env.getOrElse("GITHUB_ACTOR", "pityka"),
+        sys.env.getOrElse("GITHUB_TOKEN", "")
+      )
+    )
+  else Seq.empty
+
+lazy val gitlabPackagesSettings: Seq[Def.Setting[_]] =
+  (
+    sys.env.get("GITLAB_DEPLOY_TOKEN"),
+    sys.env.get("GITLAB_DEPLOY_TOKEN_USER"),
+    sys.env.get("GITLAB_PROJECT_ID")
+  ) match {
+    case (Some(token), Some(user), Some(projectId))
+        if token.nonEmpty && user.nonEmpty && projectId.nonEmpty =>
+      Seq(
+        publishTo := Some(
+          "gitlab" at s"https://gitlab.com/api/v4/projects/$projectId/packages/maven"
+        ),
+        credentials += Credentials(
+          "GitLab Packages Registry",
+          "gitlab.com",
+          user,
+          token
+        )
+      )
+    case _ => Seq.empty
+  }
+
 lazy val commonSettings = Seq(
   scalaVersion := "2.13.8",
   crossScalaVersions := Seq("2.12.15", "2.13.8", "3.0.1"),
@@ -88,7 +125,7 @@ lazy val commonSettings = Seq(
 ) ++ Seq(
   fork := true,
   cancelable in Global := true
-)
+) ++ githubPackagesSettings ++ gitlabPackagesSettings
 
 lazy val core = (project in file("core"))
   .settings(commonSettings: _*)
