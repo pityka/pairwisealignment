@@ -28,7 +28,10 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v1
-      - uses: olafurpg/setup-scala@v10
+      - uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: 17
       - uses: sbt/setup-sbt@v1
       - name: Publish to GitHub Packages
         run: sbt +test versionCheck +publish
@@ -41,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: olafurpg/setup-scala@v10
+      - uses: actions/setup-java@v2
       - uses: sbt/setup-sbt@v1
       - name: Publish to GitLab Packages
         run: sbt +test versionCheck +publish
